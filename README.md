@@ -250,6 +250,8 @@ public interface Recarregavel {
 
 ## Autores
 
-Desenvolvido para a Global Solution FIAP 2026 — Turma 2ESPG
-Disciplina: Domain Driven Design - Java
-Professor: Eduardo dos Santos Ramos
+RM:563995 - Azor Tartuce
+RM:
+RM: 
+RM:
+Rm:
