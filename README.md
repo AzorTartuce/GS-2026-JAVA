@@ -251,7 +251,7 @@ public interface Recarregavel {
 ## Autores
 
 RM:563995 - Azor Tartuce
-RM:
-RM: 
+RM:562077 - João Palermo
+RM: 561872 - Enzo 
 RM:
 Rm:
