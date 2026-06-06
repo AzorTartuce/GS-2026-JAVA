@@ -250,8 +250,10 @@ public interface Recarregavel {
 
 ## Autores
 
-RM:563995 - Azor Tartuce
-RM:562077 - João Palermo
-RM: 561872 - Enzo 
-RM:
-Rm:
+RM: 563995 - Azor Biagioni Tartuce
+RM: 562077 - João Pedro Ribeiro Palermo
+RM: 561872 - Enzo Hort Ramos
+RM: 562169 - Eduardo Santa Rosa Tolentino
+Rm: 562752 - Felipe Campos Vianna Peres
+
+
