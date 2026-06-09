@@ -21,13 +21,41 @@ O **Comandante de Missão** interage com o sistema via terminal (CLI), configura
 - [Java 17+](https://www.oracle.com/java/technologies/downloads/)
 - [IntelliJ IDEA](https://www.jetbrains.com/idea/download/) (Community Edition é gratuita)
 
+### Pelo Terminal (linha de comando)
+
+Abra o terminal na pasta raiz do projeto (`GS-2026-JAVA`) e execute os comandos abaixo:
+
+**1. Compilar o projeto**
+
+```bash
+javac -d out -sourcepath src src/br/com/fiap/space/presentation/Main.java
+```
+
+> Esse comando compila todos os arquivos Java necessários e coloca os `.class` gerados dentro da pasta `out/`.
+
+**2. Executar o sistema**
+
+```bash
+java -cp out br.com.fiap.space.presentation.Main
+```
+
+> O menu interativo do SAFS aparecerá no terminal.
+
+**Sequência completa (copie e cole direto no terminal):**
+
+```bash
+javac -d out -sourcepath src src/br/com/fiap/space/presentation/Main.java && java -cp out br.com.fiap.space.presentation.Main
+```
+
+---
+
 ### Passo a passo no IntelliJ IDEA
 
 **1. Abrir o projeto**
 
 - Abra o IntelliJ IDEA
 - Clique em **File → Open**
-- Selecione a pasta `GS-Projeto` e clique em **OK**
+- Selecione a pasta `GS-2026-JAVA` e clique em **OK**
 
 **2. Marcar a pasta src como raiz de código**
 
@@ -98,12 +126,24 @@ br.com.fiap.space
 └── infrastructure/    Camada de Infraestrutura (Repositórios em Memória)
 ```
 
+### Fluxo entre camadas
+
+```
+Main (presentation)
+  └── MissaoService (application)
+        ├── SondaFactory       → cria a Sonda correta
+        ├── SondaRepositoryImpl (infrastructure) → persiste e consulta sondas em memória
+        └── CentroDeComando    → anuncia registros e centraliza relatórios de missão
+```
+
+`MissaoService` é o único ponto que instancia `SondaRepositoryImpl`. Toda operação de salvar, listar ou buscar sondas passa pelo repositório da camada `infrastructure`. O `CentroDeComando` (domain service Singleton) é responsável exclusivamente por anunciar o registro de novas sondas e armazenar os relatórios gerados pelas rotinas autônomas — ele não gerencia o armazenamento de sondas.
+
 ---
 
 ## Estrutura de Arquivos
 
 ```
-GS-Projeto/
+GS-2026-JAVA/
 ├── README.md
 └── src/
     └── br/com/fiap/space/
@@ -130,12 +170,12 @@ GS-Projeto/
         │   ├── interfaces/
         │   │   └── Recarregavel.java
         │   ├── repository/
-        │   │   └── SondaRepository.java
+        │   │   └── SondaRepository.java       (Interface)
         │   └── service/
-        │       └── CentroDeComando.java
+        │       └── CentroDeComando.java        (Singleton)
         └── infrastructure/
             └── repository/
-                └── SondaRepositoryImpl.java
+                └── SondaRepositoryImpl.java    (Implementação em memória)
 ```
 
 ---
@@ -153,7 +193,7 @@ SondaFactory.criarSonda("EXPLORACAO");               // retorna SondaExploradora
 
 ### 2. Singleton — `CentroDeComando`
 
-Garante que apenas **uma instância** do Centro de Comando exista em toda a aplicação, controlando o registro de todas as sondas ativas.
+Garante que apenas **uma instância** do Centro de Comando exista em toda a aplicação. Responsável por anunciar o registro de novas sondas e centralizar os relatórios gerados pelas missões. O armazenamento das sondas é responsabilidade do `SondaRepositoryImpl` (camada `infrastructure`).
 
 ```java
 CentroDeComando centro = CentroDeComando.getInstance();
@@ -161,7 +201,7 @@ CentroDeComando centro = CentroDeComando.getInstance();
 
 ### 3. Template Method — `executarRotinaAutonoma()`
 
-Define o esqueleto fixo do algoritmo de missão na classe abstrata `Sonda`. O passo da ação local é um **hook** implementado de forma diferente por cada subclasse.
+Define o esqueleto fixo do algoritmo de missão na classe abstrata `Sonda`. O método é marcado como `final` para não poder ser sobrescrito. O passo da ação local é um **hook** implementado de forma diferente por cada subclasse.
 
 ```
 Passo 1 → validarStatusSistema()   verifica bateria e restrições de terreno
@@ -213,7 +253,7 @@ O sistema nunca estoura exceções genéricas. Todas as situações de erro de n
 
 ## Interface `Recarregavel`
 
-Implementada por `SondaMineradora` e `SondaExploradora`. O método `conectarBase()` recarrega a bateria ao máximo e, no caso da mineradora, esvazia o compartimento de carga.
+Implementada por `SondaMineradora` e `SondaExploradora` (ambas são sondas de solo). O método `conectarBase()` recarrega a bateria ao máximo e, no caso da mineradora, também esvazia o compartimento de carga para descarregar os recursos coletados.
 
 ```java
 public interface Recarregavel {
@@ -244,7 +284,8 @@ public interface Recarregavel {
 | **Terreno** | Característica do solo que afeta o consumo de bateria. |
 | **Recurso** | Material extraído (Gelo, Regolito, Titânio). |
 | **CompartimentoCarga** | Armazém interno da sonda mineradora com capacidade máxima. |
-| **CentroDeComando** | Sistema central (Singleton) que registra sondas e recebe relatórios. |
+| **CentroDeComando** | Singleton que anuncia registros de sondas e centraliza relatórios de missão. |
+| **SondaRepository** | Interface de domínio para persistência de sondas, implementada pela camada infrastructure. |
 
 ---
 
@@ -254,6 +295,4 @@ RM: 563995 - Azor Biagioni Tartuce
 RM: 562077 - João Pedro Ribeiro Palermo
 RM: 561872 - Enzo Hort Ramos
 RM: 562169 - Eduardo Santa Rosa Tolentino
-Rm: 562752 - Felipe Campos Vianna Peres
-
-
+RM: 562752 - Felipe Campos Vianna Peres

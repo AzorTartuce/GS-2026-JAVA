@@ -59,8 +59,13 @@ public abstract class Sonda {
         double consumoTotal = consumoDeslocamento + getConsumoAcaoLocal();
 
         if (bateria.isInsuficiente(consumoTotal)) {
+            if (consumoTotal > bateria.getCapacidadeMaxima()) {
+                throw new BateriaCriticaException(
+                    String.format("Missao impossivel! Esta rota exige %.1f de energia, mas a capacidade maxima da bateria e %.1f. Escolha um destino mais proximo ou um terreno menos hostil.",
+                        consumoTotal, bateria.getCapacidadeMaxima()));
+            }
             throw new BateriaCriticaException(
-                String.format("Energia insuficiente para a missao! Necessario: %.1f (deslocamento: %.1f + acao: %.1f) | Disponivel: %.1f",
+                String.format("Energia insuficiente! Necessario: %.1f (deslocamento: %.1f + acao: %.1f) | Disponivel: %.1f. Recarregue a sonda antes de prosseguir.",
                     consumoTotal, consumoDeslocamento, getConsumoAcaoLocal(), bateria.getCapacidadeAtual()));
         }
 

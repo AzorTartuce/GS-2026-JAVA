@@ -189,7 +189,6 @@ public class Main {
         } catch (BateriaCriticaException e) {
             System.out.println("\n*** ALERTA: BATERIA CRITICA! ***");
             System.out.println("Detalhe: " + e.getMessage());
-            System.out.println("Acao recomendada: Recarregue a sonda antes de prosseguir (opcao 4).");
         } catch (CargaExcedidaException e) {
             System.out.println("\n*** ALERTA: CAPACIDADE DE CARGA EXCEDIDA! ***");
             System.out.println("Detalhe: " + e.getMessage());
