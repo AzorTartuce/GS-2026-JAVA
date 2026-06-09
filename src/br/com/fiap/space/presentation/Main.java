@@ -162,11 +162,21 @@ public class Main {
         System.out.print("\nID da Sonda alvo (ex: SND-001): ");
         String idSonda = scanner.nextLine().trim().toUpperCase();
 
+        if (!existeSondaComId(sondas, idSonda)) {
+            System.out.println("[Erro] Sonda com ID '" + idSonda + "' nao encontrada.");
+            return;
+        }
+
         System.out.print("Coordenada X (0 a 100): ");
         int x = lerOpcaoNumerica();
 
         System.out.print("Coordenada Y (0 a 100): ");
         int y = lerOpcaoNumerica();
+
+        if (x < 0 || x > 100 || y < 0 || y > 100) {
+            System.out.println("[Erro] Coordenadas devem estar entre 0 e 100.");
+            return;
+        }
 
         Terreno terreno = selecionarTerreno();
         if (terreno == null) {
@@ -234,11 +244,21 @@ public class Main {
         System.out.print("\nID da Sonda para recarregar (ex: SND-001): ");
         String idSonda = scanner.nextLine().trim().toUpperCase();
 
-        try {
-            missaoService.recarregarSonda(idSonda);
-        } catch (IllegalArgumentException e) {
-            System.out.println("[Erro] " + e.getMessage());
+        if (!existeSondaComId(sondas, idSonda)) {
+            System.out.println("[Erro] Sonda com ID '" + idSonda + "' nao encontrada.");
+            return;
         }
+
+        missaoService.recarregarSonda(idSonda);
+    }
+
+    private static boolean existeSondaComId(List<Sonda> sondas, String idSonda) {
+        for (Sonda sonda : sondas) {
+            if (sonda.getIdSonda().equals(idSonda)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // === CASO DE USO 5: EXIBIR RELATORIOS ===

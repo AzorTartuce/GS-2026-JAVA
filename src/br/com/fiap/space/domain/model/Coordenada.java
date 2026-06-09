@@ -1,7 +1,5 @@
 package br.com.fiap.space.domain.model;
 
-import java.util.Objects;
-
 public final class Coordenada {
 
     private static final int LIMITE_MAXIMO = 100;
@@ -38,13 +36,14 @@ public final class Coordenada {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Coordenada that)) return false;
+        if (!(o instanceof Coordenada)) return false;
+        Coordenada that = (Coordenada) o;
         return eixoX == that.eixoX && eixoY == that.eixoY;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(eixoX, eixoY);
+        return eixoX * 31 + eixoY;
     }
 
     @Override

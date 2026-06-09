@@ -9,16 +9,20 @@ import br.com.fiap.space.domain.model.Coordenada;
 import br.com.fiap.space.domain.model.Recurso;
 import br.com.fiap.space.domain.model.Sonda;
 import br.com.fiap.space.domain.model.Terreno;
+import br.com.fiap.space.domain.repository.SondaRepository;
 import br.com.fiap.space.domain.service.CentroDeComando;
+import br.com.fiap.space.infrastructure.repository.SondaRepositoryImpl;
 
 import java.util.List;
 
 public class MissaoService {
 
-    private CentroDeComando centroDeComando;
+    private final CentroDeComando centroDeComando;
+    private final SondaRepository sondaRepository;
 
     public MissaoService() {
         this.centroDeComando = CentroDeComando.getInstance();
+        this.sondaRepository = new SondaRepositoryImpl();
     }
 
     public Sonda lancarSonda(String tipo, Recurso recurso) {
@@ -30,18 +34,19 @@ public class MissaoService {
             sonda = SondaFactory.criarSonda(tipo);
         }
 
+        sondaRepository.salvar(sonda);
         centroDeComando.registrarSonda(sonda);
         return sonda;
     }
 
     public List<Sonda> listarSondas() {
-        return centroDeComando.listarSondas();
+        return sondaRepository.listarTodas();
     }
 
     public void executarMissao(String idSonda, int x, int y, Terreno terreno)
             throws BateriaCriticaException, TerrenoInvalidoException, CargaExcedidaException {
 
-        Sonda sonda = centroDeComando.buscarSondaPorId(idSonda);
+        Sonda sonda = sondaRepository.buscarPorId(idSonda);
 
         if (sonda == null) {
             throw new IllegalArgumentException("Sonda com ID '" + idSonda + "' nao encontrada.");
@@ -52,7 +57,7 @@ public class MissaoService {
     }
 
     public void recarregarSonda(String idSonda) {
-        Sonda sonda = centroDeComando.buscarSondaPorId(idSonda);
+        Sonda sonda = sondaRepository.buscarPorId(idSonda);
 
         if (sonda == null) {
             throw new IllegalArgumentException("Sonda com ID '" + idSonda + "' nao encontrada.");

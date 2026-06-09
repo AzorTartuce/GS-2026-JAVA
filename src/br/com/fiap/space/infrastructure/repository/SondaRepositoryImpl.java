@@ -16,8 +16,8 @@ public class SondaRepositoryImpl implements SondaRepository {
     }
 
     @Override
-    public Optional<Sonda> buscarPorId(String id) {
-        return Optional.ofNullable(armazenamento.get(id));
+    public Sonda buscarPorId(String id) {
+        return armazenamento.get(id);
     }
 
     @Override
