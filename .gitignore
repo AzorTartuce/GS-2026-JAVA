@@ -1,6 +1,9 @@
 # Claude Code
 .claude/
 
+# DevContainer
+.devcontainer/
+
 # Arquivos compilados
 out/
 *.class
